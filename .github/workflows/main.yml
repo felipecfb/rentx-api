@@ -18,6 +18,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
+          
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+         find: "./src/"
+         replace: "./dist/"
+         include: "**data-source.ts" # Will match all README.md files in any nested directory
 
       - name: Install Dependencies
         run: yarn
