@@ -44,5 +44,6 @@ jobs:
           script: |
             cd ~/app/rentx-api
             yarn
+            yarn migration:generate
             yarn migration:run
             pm2 restart rentx_api
