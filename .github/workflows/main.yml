@@ -19,6 +19,13 @@ jobs:
         with:
           node-version: 18.x
           
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+         find: "./src/"
+         replace: "./dist/"
+         include: "**data-source.ts" # Will match all README.md files in any nested directory
+          
       - name: Install Dependencies
         run: yarn
         
@@ -44,6 +51,6 @@ jobs:
           script: |
             cd ~/app/rentx-api
             yarn
-            typeorm-ts-node-commonjs -d ./src/shared/infra/typeorm/data-source.ts migration:run
+            yarn typeorm migration:run
             yarn seed:admin
             pm2 restart rentx_api
