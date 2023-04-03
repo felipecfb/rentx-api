@@ -18,7 +18,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-
+          
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+         find: "./src/"
+         replace: "./dist/"
+         include: "**data-source.ts" # Will match all README.md files in any nested directory
+          
       - name: Install Dependencies
         run: yarn
         
@@ -31,7 +38,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          source: "., !node_modules"
+          source: "., !node_modules, !docker-compose.yml"
           target: "~/app/rentx-api"
           
       - name: Update API
@@ -44,5 +51,6 @@ jobs:
           script: |
             cd ~/app/rentx-api
             yarn
-            yarn migration:run
+            yarn typeorm migration:run
+            yarn seed:admin
             pm2 restart rentx_api
