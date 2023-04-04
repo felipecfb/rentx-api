@@ -11,11 +11,13 @@ const redisClient = createClient({
   port: Number(process.env.REDIS_PORT),
 });
 
+redisClient.on('error', err => console.log('Redis Client Error', err));
+
 const limiter = new RateLimiterRedis({
   storeClient: redisClient,
   keyPrefix: 'rateLimiter',
   points: 10,
-  duration: 1,
+  duration: 5,
 });
 
 export default async function rateLimiter(
@@ -24,12 +26,12 @@ export default async function rateLimiter(
   next: NextFunction,
 ): Promise<void> {
   try {
-    await redisClient.connect();
-
     await limiter.consume(request.ip);
 
     return next();
   } catch (err) {
-    throw new AppError('Too many requests', 429);
+    console.log(err);
+
+    throw new AppError(`Too many requests ---> ${err}`, 429);
   }
 }
